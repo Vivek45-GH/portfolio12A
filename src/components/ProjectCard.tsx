@@ -1,5 +1,5 @@
-import { Project } from '../types';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Project } from '@/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink, User } from 'lucide-react';
 import { motion } from 'motion/react';
 

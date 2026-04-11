@@ -1,8 +1,8 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth, db } from '../lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
-import { Student } from '../types';
+import { Student } from '@/types';
 
 interface AuthContextType {
   user: User | null;
