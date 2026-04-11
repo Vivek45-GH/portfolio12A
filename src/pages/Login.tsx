@@ -9,11 +9,12 @@ import { motion } from 'motion/react';
 import { toast } from 'sonner';
 
 export function Login() {
-  const { user, isAdmin, login, loginWithEmail, loading } = useAuth();
+  const { user, isAdmin, login, loginWithEmail, register, loading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
 
   if (loading) return null;
   if (user && isAdmin) return <Navigate to="/admin" />;
@@ -22,12 +23,27 @@ export function Login() {
     e.preventDefault();
     setIsLoggingIn(true);
     try {
-      await loginWithEmail(email, password);
-      toast.success("Welcome back, Admin!");
-      navigate('/admin');
+      if (isSignUp) {
+        await register(email, password);
+        toast.success("Account created successfully!");
+      } else {
+        await loginWithEmail(email, password);
+        toast.success("Welcome back!");
+      }
+      navigate(isAdmin ? '/admin' : '/');
     } catch (error: any) {
-      console.error(error);
-      toast.error("Invalid credentials or access denied.");
+      console.error("Auth Error:", error);
+      if (error.code === 'auth/user-not-found') {
+        toast.error("User not found. Please check your email or sign up.");
+      } else if (error.code === 'auth/wrong-password') {
+        toast.error("Incorrect password.");
+      } else if (error.code === 'auth/email-already-in-use') {
+        toast.error("This email is already registered. Try logging in.");
+      } else if (error.code === 'auth/weak-password') {
+        toast.error("Password should be at least 6 characters.");
+      } else {
+        toast.error(error.message || "Authentication failed.");
+      }
     } finally {
       setIsLoggingIn(false);
     }
@@ -47,15 +63,17 @@ export function Login() {
             <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
               <Shield className="h-8 w-8 text-primary" />
             </div>
-            <CardTitle className="text-3xl font-bold tracking-tight">Admin Portal</CardTitle>
+            <CardTitle className="text-3xl font-bold tracking-tight">
+              {isSignUp ? 'Create Account' : 'Admin Portal'}
+            </CardTitle>
             <CardDescription className="text-muted-foreground">
-              Enter your credentials to access the command center
+              {isSignUp ? 'Join the session 2026-2027' : 'Enter your credentials to access the command center'}
             </CardDescription>
           </CardHeader>
           <CardContent className="p-8 pt-4">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <label className="text-sm font-medium leading-none">
                   Email Address
                 </label>
                 <div className="relative">
@@ -71,7 +89,7 @@ export function Login() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <label className="text-sm font-medium leading-none">
                   Password
                 </label>
                 <div className="relative">
@@ -95,12 +113,21 @@ export function Login() {
                   <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
                   <>
-                    Access Dashboard
+                    {isSignUp ? 'Create Account' : 'Access Dashboard'}
                     <ArrowRight className="h-5 w-5" />
                   </>
                 )}
               </Button>
             </form>
+
+            <div className="mt-4 text-center">
+              <button 
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-sm text-primary hover:underline font-medium"
+              >
+                {isSignUp ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
+              </button>
+            </div>
             
             <div className="mt-8 pt-6 border-t border-primary/10 text-center space-y-4">
               <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">
@@ -114,8 +141,9 @@ export function Login() {
                     await login();
                     toast.success("Welcome, Student!");
                     navigate('/');
-                  } catch (error) {
-                    toast.error("Google login failed.");
+                  } catch (error: any) {
+                    console.error("Google Login Error:", error);
+                    toast.error("Google login failed. " + (error.message || ""));
                   }
                 }}
               >

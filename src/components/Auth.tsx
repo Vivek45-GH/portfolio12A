@@ -1,5 +1,5 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User, signInWithEmailAndPassword } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { Student } from '@/types';
@@ -11,6 +11,7 @@ interface AuthContextType {
   isAdmin: boolean;
   login: () => Promise<void>;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
+  register: (email: string, pass: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -106,13 +107,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signInWithEmailAndPassword(auth, email, pass);
   };
 
+  const register = async (email: string, pass: string) => {
+    if (!auth) return;
+    await createUserWithEmailAndPassword(auth, email, pass);
+  };
+
   const logout = async () => {
     if (!auth) return;
     await signOut(auth);
   };
 
   return (
-    <AuthContext.Provider value={{ user, studentProfile, loading, isAdmin, login, loginWithEmail, logout }}>
+    <AuthContext.Provider value={{ user, studentProfile, loading, isAdmin, login, loginWithEmail, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
