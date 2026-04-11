@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, handleFirestoreError, OperationType } from '@/lib/firebase';
 import { Student, Project } from '@/types';
 import { StudentCard } from '@/components/StudentCard';
 import { ProjectCard } from '@/components/ProjectCard';
@@ -20,11 +20,15 @@ export function Home() {
     const qStudents = query(collection(db, 'students'), orderBy('name'));
     const unsubscribeStudents = onSnapshot(qStudents, (snapshot) => {
       setStudents(snapshot.docs.map(doc => doc.data() as Student));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'students');
     });
 
     const qProjects = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
     const unsubscribeProjects = onSnapshot(qProjects, (snapshot) => {
       setProjects(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Project)));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'projects');
     });
 
     return () => {
