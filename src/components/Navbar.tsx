@@ -1,5 +1,5 @@
-import { useAuth } from './Auth';
-import { Button } from './ui/button';
+import { useAuth } from '@/components/Auth';
+import { Button } from '@/components/ui/button';
 import { Moon, Sun, LogIn, LogOut, User as UserIcon, Shield } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';

@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { db } from '../lib/firebase';
-import { Student, Project } from '../types';
-import { StudentCard } from '../components/StudentCard';
-import { ProjectCard } from '../components/ProjectCard';
-import { Input } from '../components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import { db } from '@/lib/firebase';
+import { Student, Project } from '@/types';
+import { StudentCard } from '@/components/StudentCard';
+import { ProjectCard } from '@/components/ProjectCard';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Search, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 

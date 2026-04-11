@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot, User, Loader2, Minimize2, Maximize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { generateChatResponse } from '../lib/gemini';
+import { generateChatResponse } from '@/lib/gemini';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
-import { cn } from '../lib/utils';
-import { Input } from './ui/input';
-import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 interface Message {
   role: 'user' | 'model';

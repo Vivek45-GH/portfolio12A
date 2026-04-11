@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, query, orderBy, doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '../lib/firebase';
-import { useAuth } from '../components/Auth';
-import { Student, Project } from '../types';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import { Button } from '../components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { db } from '@/lib/firebase';
+import { useAuth } from '@/components/Auth';
+import { Student, Project } from '@/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Trash2, Shield, User, FolderOpen, ArrowLeft, Lock, Unlock } from 'lucide-react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { cn } from '../lib/utils';
+import { cn } from '@/lib/utils';
 
-import { StatusBadge } from '../components/StatusBadge';
+import { StatusBadge } from '@/components/StatusBadge';
 
 export function Admin() {
   const { isAdmin, loading } = useAuth();

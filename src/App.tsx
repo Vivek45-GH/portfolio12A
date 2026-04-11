@@ -4,15 +4,15 @@
  */
 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './components/Auth';
-import { Navbar } from './components/Navbar';
-import { Home } from './pages/Home';
-import { Profile } from './pages/Profile';
-import { Admin } from './pages/Admin';
-import { Login } from './pages/Login';
-import { ChatBot } from './components/ChatBot';
+import { AuthProvider } from '@/components/Auth';
+import { Navbar } from '@/components/Navbar';
+import { Home } from '@/pages/Home';
+import { Profile } from '@/pages/Profile';
+import { Admin } from '@/pages/Admin';
+import { Login } from '@/pages/Login';
+import { ChatBot } from '@/components/ChatBot';
 
-import { Toaster } from './components/ui/sonner';
+import { Toaster } from '@/components/ui/sonner';
 
 export default function App() {
   return (
