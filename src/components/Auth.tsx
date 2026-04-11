@@ -34,9 +34,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
+    if (!auth) {
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
-      if (firebaseUser) {
+      if (firebaseUser && db) {
         const docRef = doc(db, 'students', firebaseUser.uid);
         const docSnap = await getDoc(docRef);
         
@@ -69,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Presence heartbeat
   useEffect(() => {
-    if (!user) return;
+    if (!user || !db) return;
 
     const interval = setInterval(() => {
       if (document.visibilityState === 'visible') {
@@ -91,15 +96,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user]);
 
   const login = async () => {
+    if (!auth) return;
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
   };
 
   const loginWithEmail = async (email: string, pass: string) => {
+    if (!auth) return;
     await signInWithEmailAndPassword(auth, email, pass);
   };
 
   const logout = async () => {
+    if (!auth) return;
     await signOut(auth);
   };
 

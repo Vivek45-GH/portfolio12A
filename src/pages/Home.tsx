@@ -15,6 +15,8 @@ export function Home() {
   const [search, setSearch] = useState('');
 
   useEffect(() => {
+    if (!db) return;
+
     const qStudents = query(collection(db, 'students'), orderBy('name'));
     const unsubscribeStudents = onSnapshot(qStudents, (snapshot) => {
       setStudents(snapshot.docs.map(doc => doc.data() as Student));

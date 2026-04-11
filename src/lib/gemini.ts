@@ -1,10 +1,16 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
 export const geminiModel = "gemini-3.1-pro-preview";
 
 export async function generateChatResponse(message: string, history: { role: 'user' | 'model', text: string }[]) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  
+  if (!apiKey || apiKey === "undefined") {
+    return "I'm sorry, my AI brain (Gemini API Key) is not configured yet. Please ask the administrator to set the GEMINI_API_KEY environment variable.";
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
+  
   const contents = history.map(h => ({
     role: h.role === 'user' ? 'user' : 'model',
     parts: [{ text: h.text }]
