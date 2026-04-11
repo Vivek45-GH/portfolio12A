@@ -1,0 +1,52 @@
+{
+  "entities": {
+    "Student": {
+      "title": "Student Profile",
+      "description": "Profile information for a class student",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "name": { "type": "string", "description": "Full name of the student" },
+        "bio": { "type": "string", "description": "Short biography" },
+        "photoURL": { "type": "string", "description": "Profile picture URL" },
+        "socialLinks": {
+          "type": "object",
+          "properties": {
+            "instagram": { "type": "string" },
+            "twitter": { "type": "string" },
+            "linkedin": { "type": "string" },
+            "github": { "type": "string" }
+          }
+        },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "role": { "type": "string", "enum": ["student", "admin"] }
+      },
+      "required": ["uid", "name"]
+    },
+    "Project": {
+      "title": "Student Project",
+      "description": "A project uploaded by a student",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "imageURL": { "type": "string" },
+        "link": { "type": "string" },
+        "authorUid": { "type": "string" },
+        "authorName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "authorUid", "authorName"]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": {
+      "schema": "Student",
+      "description": "Collection of student profiles"
+    },
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Collection of student projects"
+    }
+  }
+}
