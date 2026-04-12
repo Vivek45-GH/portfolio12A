@@ -11,6 +11,7 @@ export interface Student {
     snapchat?: string;
     discord?: string;
     youtube?: string;
+    spotify?: string;
   };
   tags?: string[];
   role?: 'student' | 'admin';
@@ -27,4 +28,14 @@ export interface Project {
   authorUid: string;
   authorName: string;
   createdAt: any;
+}
+
+export interface GalleryItem {
+  id: string;
+  imageURL: string;
+  caption?: string;
+  uploadedBy: string;
+  uploaderName: string;
+  createdAt: any;
+  aspectRatio?: 'portrait' | 'landscape' | 'square';
 }

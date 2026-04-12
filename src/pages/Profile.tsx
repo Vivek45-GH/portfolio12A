@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Instagram, Twitter, Linkedin, Github, Plus, Trash2, Edit2, Save, X, Ghost, ArrowLeft, Camera, Loader2, MessageSquare, Youtube } from 'lucide-react';
+import { Instagram, Twitter, Linkedin, Github, Plus, Trash2, Edit2, Save, X, Ghost, ArrowLeft, Camera, Loader2, MessageSquare, Youtube, Music2 } from 'lucide-react';
 import { ProjectCard } from '@/components/ProjectCard';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
@@ -35,6 +35,7 @@ export function Profile() {
       youtube: '',
       linkedin: '',
       github: '',
+      spotify: '',
     }
   });
   const [newProject, setNewProject] = useState<Partial<Project>>({ title: '', description: '', imageURL: '', link: '' });
@@ -65,6 +66,7 @@ export function Profile() {
             youtube: data.socialLinks?.youtube || '',
             linkedin: data.socialLinks?.linkedin || '',
             github: data.socialLinks?.github || '',
+            spotify: data.socialLinks?.spotify || '',
           }
         });
       }
@@ -281,6 +283,12 @@ export function Profile() {
                         onChange={(e) => setEditData({...editData, socialLinks: {...editData.socialLinks, github: e.target.value}})}
                         className="glass"
                       />
+                      <Input 
+                        placeholder="Spotify URL" 
+                        value={editData.socialLinks?.spotify} 
+                        onChange={(e) => setEditData({...editData, socialLinks: {...editData.socialLinks, spotify: e.target.value}})}
+                        className="glass"
+                      />
                     </div>
                     <div className="flex gap-2 pt-4">
                       <Button onClick={handleSaveProfile} className="flex-1 gap-2">
@@ -334,6 +342,11 @@ export function Profile() {
                       {profile.socialLinks?.github && (
                         <a href={profile.socialLinks.github} target="_blank" rel="noreferrer" className="p-3 rounded-full glass hover:text-foreground transition-all">
                           <Github className="h-6 w-6" />
+                        </a>
+                      )}
+                      {profile.socialLinks?.spotify && (
+                        <a href={profile.socialLinks.spotify} target="_blank" rel="noreferrer" className="p-3 rounded-full glass hover:text-[#1DB954] transition-all">
+                          <Music2 className="h-6 w-6" />
                         </a>
                       )}
                     </div>

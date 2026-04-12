@@ -1,6 +1,6 @@
 import { useAuth } from '@/components/Auth';
 import { Button } from '@/components/ui/button';
-import { Moon, Sun, LogIn, LogOut, User as UserIcon, Shield } from 'lucide-react';
+import { Moon, Sun, LogIn, LogOut, User as UserIcon, Shield, Image as ImageIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -26,6 +26,12 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-4">
+          <Link to="/gallery">
+            <Button variant="ghost" size="sm" className="hidden sm:flex gap-2">
+              <ImageIcon className="h-4 w-4" />
+              Gallery
+            </Button>
+          </Link>
           <Button
             variant="ghost"
             size="icon"

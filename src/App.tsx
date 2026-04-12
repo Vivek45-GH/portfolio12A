@@ -10,6 +10,7 @@ import { Home } from '@/pages/Home';
 import { Profile } from '@/pages/Profile';
 import { Admin } from '@/pages/Admin';
 import { Login } from '@/pages/Login';
+import { Gallery } from '@/pages/Gallery';
 import { ChatBot } from '@/components/ChatBot';
 import { auth, db } from '@/lib/firebase';
 import { AlertTriangle } from 'lucide-react';
@@ -36,6 +37,7 @@ export default function App() {
               <Route path="/profile/:id" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/gallery" element={<Gallery />} />
             </Routes>
           </main>
           <ChatBot />

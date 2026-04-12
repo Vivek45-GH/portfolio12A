@@ -15,7 +15,8 @@
             "instagram": { "type": "string" },
             "twitter": { "type": "string" },
             "linkedin": { "type": "string" },
-            "github": { "type": "string" }
+            "github": { "type": "string" },
+            "spotify": { "type": "string" }
           }
         },
         "tags": { "type": "array", "items": { "type": "string" } },
@@ -37,6 +38,20 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["title", "authorUid", "authorName"]
+    },
+    "GalleryItem": {
+      "title": "Gallery Item",
+      "description": "A photo uploaded to the class gallery",
+      "type": "object",
+      "properties": {
+        "imageURL": { "type": "string" },
+        "caption": { "type": "string" },
+        "uploadedBy": { "type": "string" },
+        "uploaderName": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "aspectRatio": { "type": "string", "enum": ["portrait", "landscape", "square"] }
+      },
+      "required": ["imageURL", "uploadedBy", "uploaderName"]
     }
   },
   "firestore": {
@@ -47,6 +62,10 @@
     "/projects/{projectId}": {
       "schema": "Project",
       "description": "Collection of student projects"
+    },
+    "/gallery/{itemId}": {
+      "schema": "GalleryItem",
+      "description": "Collection of gallery photos"
     }
   }
 }

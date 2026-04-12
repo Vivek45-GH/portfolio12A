@@ -82,5 +82,12 @@ service cloud.firestore {
       allow update: if (isAuthenticated() && resource.data.authorUid == request.auth.uid && isValidProject(request.resource.data)) || isAdmin();
       allow delete: if (isAuthenticated() && resource.data.authorUid == request.auth.uid) || isAdmin();
     }
+
+    match /gallery/{itemId} {
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update: if (isAuthenticated() && resource.data.uploadedBy == request.auth.uid) || isAdmin();
+      allow delete: if (isAuthenticated() && resource.data.uploadedBy == request.auth.uid) || isAdmin();
+    }
   }
 }
