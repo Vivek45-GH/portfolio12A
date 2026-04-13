@@ -90,9 +90,13 @@
         "encryptedKeyForReceiver": { "type": "string" },
         "iv": { "type": "string" },
         "createdAt": { "type": "string", "format": "date-time" },
-        "read": { "type": "boolean" }
+        "read": { "type": "boolean" },
+        "type": { "type": "string", "enum": ["text", "image", "file", "audio"] },
+        "fileName": { "type": "string" },
+        "fileSize": { "type": "number" },
+        "audioDuration": { "type": "number" }
       },
-      "required": ["senderId", "receiverId", "encryptedContent", "iv", "createdAt"]
+      "required": ["senderId", "receiverId", "encryptedContent", "iv", "createdAt", "type"]
     }
   },
   "firestore": {

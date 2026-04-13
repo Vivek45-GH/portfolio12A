@@ -64,7 +64,11 @@ export interface DirectMessage {
   encryptedContent: string;
   encryptedKeyForSender: string;
   encryptedKeyForReceiver: string;
-  iv: string; // Initialization vector for AES-GCM
+  iv: string;
   createdAt: any;
   read: boolean;
+  type: 'text' | 'image' | 'file' | 'audio';
+  fileName?: string;
+  fileSize?: number;
+  audioDuration?: number;
 }

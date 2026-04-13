@@ -358,10 +358,11 @@ export function Profile() {
                     )}
                     {!isOwnProfile && (
                       <Button 
-                        onClick={() => navigate('/messages')} 
-                        className="w-full gap-2 mt-2 rounded-full shadow-lg shadow-primary/20"
+                        onClick={() => navigate(`/messages?to=${id}`)} 
+                        className="w-full gap-3 mt-4 h-14 rounded-2xl bg-gradient-to-r from-primary to-secondary text-white font-black tracking-tighter shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                       >
-                        <MessageSquare className="h-4 w-4" /> Message Student
+                        <MessageSquare className="h-6 w-6" /> 
+                        DIRECT MESSAGE
                       </Button>
                     )}
                   </>

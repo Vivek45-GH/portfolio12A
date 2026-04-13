@@ -11,7 +11,6 @@ import { Profile } from '@/pages/Profile';
 import { Admin } from '@/pages/Admin';
 import { Login } from '@/pages/Login';
 import { Gallery } from '@/pages/Gallery';
-import { Announcements } from '@/pages/Announcements';
 import { Messages } from '@/pages/Messages';
 import { ChatBot } from '@/components/ChatBot';
 import { auth, db } from '@/lib/firebase';
@@ -40,7 +39,6 @@ export default function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="/login" element={<Login />} />
               <Route path="/gallery" element={<Gallery />} />
-              <Route path="/announcements" element={<Announcements />} />
               <Route path="/messages" element={<Messages />} />
             </Routes>
           </main>
