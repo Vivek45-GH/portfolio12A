@@ -17,7 +17,6 @@ export interface Student {
   role?: 'student' | 'admin';
   canEdit?: boolean;
   lastSeen?: any;
-  publicKey?: string;
 }
 
 export interface Project {
@@ -47,28 +46,4 @@ export interface Announcement {
   author: string;
   createdAt: any;
   source?: 'whatsapp' | 'web';
-}
-
-export interface ChatRoom {
-  id: string;
-  participants: string[]; // [uid1, uid2] sorted
-  lastMessage?: string;
-  lastMessageAt?: any;
-  updatedAt: any;
-}
-
-export interface DirectMessage {
-  id: string;
-  senderId: string;
-  receiverId: string;
-  encryptedContent: string;
-  encryptedKeyForSender: string;
-  encryptedKeyForReceiver: string;
-  iv: string;
-  createdAt: any;
-  read: boolean;
-  type: 'text' | 'image' | 'file' | 'audio';
-  fileName?: string;
-  fileSize?: number;
-  audioDuration?: number;
 }

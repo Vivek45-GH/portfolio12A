@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Instagram, Twitter, Linkedin, Github, Plus, Trash2, Edit2, Save, X, Ghost, ArrowLeft, Camera, Loader2, MessageSquare, Youtube, Music2 } from 'lucide-react';
+import { Instagram, Twitter, Linkedin, Github, Plus, Trash2, Edit2, Save, X, Ghost, ArrowLeft, Camera, Loader2, Youtube, Music2, MessageCircle } from 'lucide-react';
 import { ProjectCard } from '@/components/ProjectCard';
 import { motion } from 'motion/react';
 import { toast } from 'sonner';
@@ -326,7 +326,7 @@ export function Profile() {
                       )}
                       {profile.socialLinks?.discord && (
                         <a href={profile.socialLinks.discord} target="_blank" rel="noreferrer" className="p-3 rounded-full glass hover:text-[#5865F2] transition-all">
-                          <MessageSquare className="h-6 w-6" />
+                          <MessageCircle className="h-6 w-6" />
                         </a>
                       )}
                       {profile.socialLinks?.youtube && (
@@ -354,15 +354,6 @@ export function Profile() {
                     {canEdit && (
                       <Button onClick={() => setIsEditing(true)} variant="outline" className="w-full gap-2 mt-4 rounded-full">
                         <Edit2 className="h-4 w-4" /> Edit Profile
-                      </Button>
-                    )}
-                    {!isOwnProfile && (
-                      <Button 
-                        onClick={() => navigate(`/messages?to=${id}`)} 
-                        className="w-full gap-3 mt-4 h-14 rounded-2xl bg-gradient-to-r from-primary to-secondary text-white font-black tracking-tighter shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                      >
-                        <MessageSquare className="h-6 w-6" /> 
-                        DIRECT MESSAGE
                       </Button>
                     )}
                   </>

@@ -67,25 +67,7 @@ async function startServer() {
     }
 
     try {
-      const genAI = new GoogleGenAI(apiKey as string);
-      const model = genAI.getGenerativeModel({ 
-        model: "gemini-1.5-pro"
-      });
-
-      const chat = model.startChat({
-        history: history.map((h: any) => ({
-          role: h.role === 'user' ? 'user' : 'model',
-          parts: [{ text: h.text }]
-        })),
-        generationConfig: {
-          maxOutputTokens: 2000,
-        }
-      });
-
-      // We can't use systemInstruction in getGenerativeModel in some versions, 
-      // so we'll prepend it to the message or use the correct parameter if available.
-      // Actually, systemInstruction IS supported in newer versions.
-      // Let's try to use it correctly.
+      const ai = new GoogleGenAI({ apiKey: apiKey as string });
       
       const systemPrompt = `You are "Mr Ballu", an ultra-advanced AI tutor for PM SHRI Kendriya Vidyalaya Bawana. 
       You are an expert in Physics, Chemistry, Mathematics, and Computer Science.
@@ -101,18 +83,22 @@ async function startServer() {
       
       Always respond as Mr Ballu.`;
 
-      const result = await model.generateContent({
+      const response = await ai.models.generateContent({
+        model: "gemini-3.1-pro-preview",
         contents: [
           ...history.map((h: any) => ({
             role: h.role === 'user' ? 'user' : 'model',
             parts: [{ text: h.text }]
           })),
-          { role: 'user', parts: [{ text: `${systemPrompt}\n\nUser Message: ${message}` }] }
-        ]
+          { role: 'user', parts: [{ text: message }] }
+        ],
+        config: {
+          systemInstruction: systemPrompt,
+          temperature: 0.7,
+        }
       });
       
-      const response = await result.response;
-      res.json({ text: response.text() });
+      res.json({ text: response.text });
     } catch (error) {
       console.error("AI Chat Error:", error);
       res.status(500).json({ error: "Failed to generate AI response." });
