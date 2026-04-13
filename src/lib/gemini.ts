@@ -1,46 +1,28 @@
-import { GoogleGenAI } from "@google/genai";
 
-export const geminiModel = "gemini-3.1-pro-preview";
+export const geminiModel = "gemini-1.5-pro";
 
 export async function generateChatResponse(message: string, history: { role: 'user' | 'model', text: string }[]) {
-  const apiKey = process.env.GEMINI_API_KEY;
-  
-  if (!apiKey || apiKey === "undefined") {
-    return "I'm sorry, my AI brain (Gemini API Key) is not configured yet. Please ask the administrator to set the GEMINI_API_KEY environment variable.";
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message, history }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to get AI response');
+    }
+
+    const data = await response.json();
+    return data.text;
+  } catch (error) {
+    console.error('Gemini API Error:', error);
+    if (error instanceof Error) {
+      return `Error: ${error.message}`;
+    }
+    return "I'm sorry, I'm having trouble connecting to my brain right now. Please try again later.";
   }
-
-  const ai = new GoogleGenAI({ apiKey });
-  
-  const contents = history.map(h => ({
-    role: h.role === 'user' ? 'user' : 'model',
-    parts: [{ text: h.text }]
-  }));
-
-  contents.push({
-    role: 'user',
-    parts: [{ text: message }]
-  });
-
-  const response = await ai.models.generateContent({
-    model: geminiModel,
-    contents,
-    config: {
-      systemInstruction: `You are "Mr Ballu", an ultra-advanced AI tutor for PM SHRI Kendriya Vidyalaya Bawana. 
-      You are an expert in Physics, Chemistry, Mathematics, and Computer Science.
-      Your goal is to solve advanced problems step-by-step and generate high-quality code for CS subjects.
-      
-      Guidelines:
-      1. Be polite, encouraging, and highly intellectual.
-      2. For STEM subjects, provide clear explanations and formulas.
-      3. For Computer Science, provide clean, well-commented code in the requested language (Python, C++, Java, etc.).
-      4. Use Markdown for formatting (bolding, lists, code blocks).
-      5. If a student asks something outside your expertise, politely redirect them to their studies but try to be helpful.
-      6. Mention "PM SHRI KV Bawana" occasionally to show school spirit.
-      
-      Always respond as Mr Ballu.`,
-      temperature: 0.7,
-    },
-  });
-
-  return response.text;
 }
