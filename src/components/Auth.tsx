@@ -3,12 +3,14 @@ import { GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, User,
 import { auth, db } from '@/lib/firebase';
 import { doc, getDoc, setDoc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { Student } from '@/types';
+import { generateKeyPair } from '@/lib/crypto';
 
 interface AuthContextType {
   user: User | null;
   studentProfile: Student | null;
   loading: boolean;
   isAdmin: boolean;
+  privateKey: string | null;
   login: () => Promise<void>;
   loginWithEmail: (email: string, pass: string) => Promise<void>;
   register: (email: string, pass: string) => Promise<void>;
@@ -21,8 +23,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [studentProfile, setStudentProfile] = useState<Student | null>(null);
   const [loading, setLoading] = useState(true);
+  const [privateKey, setPrivateKey] = useState<string | null>(localStorage.getItem('e2ee_private_key'));
 
   const isAdmin = user?.email === "vvek34785@gmail.com";
+
+  const ensureKeys = async (uid: string, currentProfile: Student) => {
+    if (!currentProfile.publicKey) {
+      console.log("Generating E2EE keys...");
+      const keys = await generateKeyPair();
+      localStorage.setItem('e2ee_private_key', keys.privateKey);
+      setPrivateKey(keys.privateKey);
+      await updateDoc(doc(db, 'students', uid), {
+        publicKey: keys.publicKey
+      });
+    }
+  };
 
   const updatePresence = async (uid: string) => {
     try {
@@ -47,10 +62,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const docSnap = await getDoc(docRef);
         
         if (docSnap.exists()) {
-          setStudentProfile(docSnap.data() as Student);
+          const data = docSnap.data() as Student;
+          setStudentProfile(data);
           updatePresence(firebaseUser.uid);
+          await ensureKeys(firebaseUser.uid, data);
         } else {
           // Create initial profile
+          const keys = await generateKeyPair();
+          localStorage.setItem('e2ee_private_key', keys.privateKey);
+          setPrivateKey(keys.privateKey);
+
           const newProfile: Student = {
             uid: firebaseUser.uid,
             name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Anonymous',
@@ -59,7 +80,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             canEdit: true,
             lastSeen: serverTimestamp(),
             socialLinks: {},
-            tags: []
+            tags: [],
+            publicKey: keys.publicKey
           };
           await setDoc(docRef, newProfile);
           setStudentProfile(newProfile);
@@ -118,7 +140,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, studentProfile, loading, isAdmin, login, loginWithEmail, register, logout }}>
+    <AuthContext.Provider value={{ user, studentProfile, loading, isAdmin, privateKey, login, loginWithEmail, register, logout }}>
       {children}
     </AuthContext.Provider>
   );

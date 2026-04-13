@@ -11,8 +11,11 @@ import { Camera, Image as ImageIcon, Loader2, Plus, Trash2, X, Sparkles, Heart }
 import { motion, AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 
+import { useNavigate } from 'react-router-dom';
+
 export function Gallery() {
   const { user, studentProfile, isAdmin } = useAuth();
+  const navigate = useNavigate();
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -97,6 +100,14 @@ export function Gallery() {
       </div>
 
       <div className="container mx-auto relative z-10">
+        <Button 
+          variant="ghost" 
+          onClick={() => navigate(-1)} 
+          className="mb-8 gap-2 hover:bg-primary/10 rounded-full"
+        >
+          <Camera className="h-4 w-4 rotate-180" /> Back to Home
+        </Button>
+
         <div className="flex flex-col md:flex-row items-center justify-between mb-16 gap-8">
           <motion.div
             initial={{ opacity: 0, x: -50 }}

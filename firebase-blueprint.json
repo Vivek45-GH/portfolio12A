@@ -20,7 +20,8 @@
           }
         },
         "tags": { "type": "array", "items": { "type": "string" } },
-        "role": { "type": "string", "enum": ["student", "admin"] }
+        "role": { "type": "string", "enum": ["student", "admin"] },
+        "publicKey": { "type": "string", "description": "RSA Public Key for E2EE" }
       },
       "required": ["uid", "name"]
     },
@@ -52,6 +53,46 @@
         "aspectRatio": { "type": "string", "enum": ["portrait", "landscape", "square"] }
       },
       "required": ["imageURL", "uploadedBy", "uploaderName"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "A class announcement",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "author": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "source": { "type": "string", "enum": ["whatsapp", "web"] }
+      },
+      "required": ["content", "author"]
+    },
+    "ChatRoom": {
+      "title": "Chat Room",
+      "description": "A private conversation between two users",
+      "type": "object",
+      "properties": {
+        "participants": { "type": "array", "items": { "type": "string" } },
+        "lastMessage": { "type": "string" },
+        "lastMessageAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["participants", "updatedAt"]
+    },
+    "DirectMessage": {
+      "title": "Direct Message",
+      "description": "An end-to-end encrypted message",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "receiverId": { "type": "string" },
+        "encryptedContent": { "type": "string" },
+        "encryptedKeyForSender": { "type": "string" },
+        "encryptedKeyForReceiver": { "type": "string" },
+        "iv": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "read": { "type": "boolean" }
+      },
+      "required": ["senderId", "receiverId", "encryptedContent", "iv", "createdAt"]
     }
   },
   "firestore": {
@@ -66,6 +107,18 @@
     "/gallery/{itemId}": {
       "schema": "GalleryItem",
       "description": "Collection of gallery photos"
+    },
+    "/announcements/{announcementId}": {
+      "schema": "Announcement",
+      "description": "Collection of announcements"
+    },
+    "/chatRooms/{roomId}": {
+      "schema": "ChatRoom",
+      "description": "Collection of private chat rooms"
+    },
+    "/chatRooms/{roomId}/messages/{messageId}": {
+      "schema": "DirectMessage",
+      "description": "Messages within a chat room"
     }
   }
 }

@@ -356,6 +356,14 @@ export function Profile() {
                         <Edit2 className="h-4 w-4" /> Edit Profile
                       </Button>
                     )}
+                    {!isOwnProfile && (
+                      <Button 
+                        onClick={() => navigate('/messages')} 
+                        className="w-full gap-2 mt-2 rounded-full shadow-lg shadow-primary/20"
+                      >
+                        <MessageSquare className="h-4 w-4" /> Message Student
+                      </Button>
+                    )}
                   </>
                 )}
               </div>

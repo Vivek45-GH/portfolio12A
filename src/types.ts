@@ -17,6 +17,7 @@ export interface Student {
   role?: 'student' | 'admin';
   canEdit?: boolean;
   lastSeen?: any;
+  publicKey?: string;
 }
 
 export interface Project {
@@ -38,4 +39,32 @@ export interface GalleryItem {
   uploaderName: string;
   createdAt: any;
   aspectRatio?: 'portrait' | 'landscape' | 'square';
+}
+
+export interface Announcement {
+  id: string;
+  content: string;
+  author: string;
+  createdAt: any;
+  source?: 'whatsapp' | 'web';
+}
+
+export interface ChatRoom {
+  id: string;
+  participants: string[]; // [uid1, uid2] sorted
+  lastMessage?: string;
+  lastMessageAt?: any;
+  updatedAt: any;
+}
+
+export interface DirectMessage {
+  id: string;
+  senderId: string;
+  receiverId: string;
+  encryptedContent: string;
+  encryptedKeyForSender: string;
+  encryptedKeyForReceiver: string;
+  iv: string; // Initialization vector for AES-GCM
+  createdAt: any;
+  read: boolean;
 }
