@@ -3,16 +3,24 @@ import { Button } from '@/components/ui/button';
 import { Moon, Sun, LogIn, LogOut, User as UserIcon, Shield, Image as ImageIcon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'motion/react';
 
 export function Navbar() {
   const { user, login, logout, isAdmin } = useAuth();
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    setIsDark(isDarkMode);
+  }, []);
+
+  useEffect(() => {
     if (isDark) {
       document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
     }
   }, [isDark]);
 
@@ -32,13 +40,24 @@ export function Navbar() {
               Gallery
             </Button>
           </Link>
+          
           <Button
             variant="ghost"
             size="icon"
             onClick={() => setIsDark(!isDark)}
-            className="rounded-full"
+            className="rounded-full relative overflow-hidden"
           >
-            {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={isDark ? 'dark' : 'light'}
+                initial={{ y: 20, opacity: 0, rotate: 45 }}
+                animate={{ y: 0, opacity: 1, rotate: 0 }}
+                exit={{ y: -20, opacity: 0, rotate: -45 }}
+                transition={{ duration: 0.2 }}
+              >
+                {isDark ? <Sun className="h-5 w-5 text-yellow-400" /> : <Moon className="h-5 w-5 text-slate-700" />}
+              </motion.div>
+            </AnimatePresence>
           </Button>
 
           {user ? (

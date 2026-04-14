@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc, updateDoc, collection, addDoc, query, where, onSnapshot, deleteDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { useAuth } from '@/components/Auth';
 import { Student, Project } from '@/types';
@@ -112,31 +112,45 @@ export function Profile() {
     try {
       if (type === 'profile') setIsUploading(true);
       else setIsProjectUploading(true);
+      console.log(`Profile: Starting ${type} upload for user ${id}...`, file.name);
 
-      console.log(`Starting ${type} upload for user ${id}...`);
       const storageRef = ref(storage, `${type}s/${id}/${Date.now()}_${file.name}`);
-      
-      // Use uploadBytes and await it properly
-      const snapshot = await uploadBytes(storageRef, file);
-      console.log("Upload successful, getting download URL...");
-      
-      const url = await getDownloadURL(snapshot.ref);
-      console.log("Download URL obtained:", url);
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-      if (type === 'profile') {
-        setEditData(prev => ({ ...prev, photoURL: url }));
-        toast.success("Photo uploaded! Click 'Save' to apply changes.");
-      } else {
-        setNewProject(prev => ({ ...prev, imageURL: url }));
-        toast.success("Project image uploaded!");
-      }
+      await new Promise((resolve, reject) => {
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(`Profile: ${type} upload is ${progress}% done`);
+          },
+          (error) => {
+            console.error("Profile: Upload task error:", error);
+            reject(error);
+          },
+          async () => {
+            console.log("Profile: Upload task completed successfully");
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("Profile: Download URL obtained:", url);
+
+            if (type === 'profile') {
+              setEditData(prev => ({ ...prev, photoURL: url }));
+              toast.success("Photo uploaded! Click 'Save' to apply changes.");
+            } else {
+              setNewProject(prev => ({ ...prev, imageURL: url }));
+              toast.success("Project image uploaded!");
+            }
+            resolve(url);
+          }
+        );
+      });
     } catch (error: any) {
-      console.error("Upload error details:", error);
+      console.error("Profile: Upload error details:", error);
       const errorMessage = error.code === 'storage/unauthorized' 
         ? "Permission denied. Please make sure you are logged in."
         : `Upload failed: ${error.message || 'Unknown error'}`;
       toast.error(errorMessage);
     } finally {
+      console.log("Profile: Upload process finished (finally)");
       if (type === 'profile') setIsUploading(false);
       else setIsProjectUploading(false);
     }

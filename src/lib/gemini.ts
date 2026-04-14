@@ -12,8 +12,22 @@ export async function generateChatResponse(message: string, history: { role: 'us
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to get AI response');
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to get AI response');
+      } else {
+        const text = await response.text();
+        console.error('Non-JSON error response:', text);
+        throw new Error(`Server error: ${response.status} ${response.statusText}`);
+      }
+    }
+
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error('Expected JSON but got:', text);
+      throw new Error('Server returned non-JSON response. The server might be restarting or misconfigured.');
     }
 
     const data = await response.json();

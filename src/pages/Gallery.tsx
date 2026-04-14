@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '@/lib/firebase';
 import { useAuth } from '@/components/Auth';
 import { GalleryItem } from '@/types';
@@ -40,25 +40,53 @@ export function Gallery() {
 
     try {
       setIsUploading(true);
+      console.log("Gallery: Starting upload...", file.name);
       const storageRef = ref(storage, `gallery/${user.uid}/${Date.now()}_${file.name}`);
-      const snapshot = await uploadBytes(storageRef, file);
-      const url = await getDownloadURL(snapshot.ref);
       
-      // Determine aspect ratio based on image dimensions
-      const img = new Image();
-      img.src = url;
-      img.onload = () => {
-        let ratio: 'portrait' | 'landscape' | 'square' = 'square';
-        if (img.width > img.height * 1.2) ratio = 'landscape';
-        else if (img.height > img.width * 1.2) ratio = 'portrait';
-        setNewPhoto(prev => ({ ...prev, imageURL: url, aspectRatio: ratio }));
-      };
-      
-      toast.success("Photo uploaded! Add a caption.");
-    } catch (error) {
-      console.error("Upload failed:", error);
-      toast.error("Upload failed.");
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      // Listen for state changes, errors, and completion of the upload.
+      await new Promise((resolve, reject) => {
+        uploadTask.on('state_changed',
+          (snapshot) => {
+            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log('Gallery: Upload is ' + progress + '% done');
+          },
+          (error) => {
+            console.error("Gallery: Upload task error:", error);
+            reject(error);
+          },
+          async () => {
+            console.log("Gallery: Upload task completed successfully");
+            const url = await getDownloadURL(uploadTask.snapshot.ref);
+            console.log("Gallery: Download URL obtained:", url);
+            
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.src = url;
+            img.onload = () => {
+              console.log("Gallery: Image loaded, dimensions:", img.width, "x", img.height);
+              let ratio: 'portrait' | 'landscape' | 'square' = 'square';
+              if (img.width > img.height * 1.2) ratio = 'landscape';
+              else if (img.height > img.width * 1.2) ratio = 'portrait';
+              setNewPhoto(prev => ({ ...prev, imageURL: url, aspectRatio: ratio }));
+              resolve(url);
+            };
+            img.onerror = (err) => {
+              console.error("Gallery: Image load error:", err);
+              setNewPhoto(prev => ({ ...prev, imageURL: url, aspectRatio: 'square' }));
+              resolve(url);
+            };
+            toast.success("Photo uploaded! Add a caption.");
+          }
+        );
+      });
+
+    } catch (error: any) {
+      console.error("Gallery: Upload failed error details:", error);
+      toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
     } finally {
+      console.log("Gallery: Upload process finished (finally)");
       setIsUploading(false);
     }
   };

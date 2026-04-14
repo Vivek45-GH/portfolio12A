@@ -8,6 +8,8 @@ import { GoogleGenAI } from "@google/genai";
 
 dotenv.config();
 
+console.log("Starting server.ts...");
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -28,7 +30,18 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  if (!process.env.GEMINI_API_KEY) {
+    console.warn("WARNING: GEMINI_API_KEY is not set in environment variables.");
+  } else {
+    console.log("GEMINI_API_KEY is configured.");
+  }
+
   app.use(express.json());
+
+  // Test Route
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", message: "Server is healthy" });
+  });
 
   // Webhook for WhatsApp Sync
   // Expected body: { content: string, secret: string }
@@ -59,6 +72,7 @@ async function startServer() {
 
   // AI Chat Endpoint
   app.post("/api/chat", async (req, res) => {
+    console.log("Received AI Chat request:", req.body);
     const { message, history } = req.body;
     const apiKey = process.env.GEMINI_API_KEY;
 
@@ -103,6 +117,11 @@ async function startServer() {
       console.error("AI Chat Error:", error);
       res.status(500).json({ error: "Failed to generate AI response." });
     }
+  });
+
+  // API 404 handler
+  app.use("/api/*", (req, res) => {
+    res.status(404).json({ error: `API route not found: ${req.method} ${req.originalUrl}` });
   });
 
   // Vite middleware for development

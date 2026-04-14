@@ -36,6 +36,7 @@ try {
   db = getFirestore(app, databaseId || '(default)');
   auth = getAuth(app);
   storage = getStorage(app);
+  console.log("Firebase initialized: Auth, Firestore, and Storage (Bucket:", firebaseConfig.storageBucket, ")");
 
   // Connection test
   const testConnection = async () => {
